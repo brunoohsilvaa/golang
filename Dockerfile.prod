@@ -4,15 +4,17 @@ WORKDIR /usr/src/app
 
 COPY ./app .
 
-RUN go build -ldflags '-s -w' -o fullcycle
+RUN mkdir ../target
+
+RUN go build -ldflags '-s -w' -o ../target/fullcycle
 
 RUN apk update && apk add --no-cache upx && \
-    upx --best --lzma fullcycle
+    upx --best --lzma ../target/fullcycle
 
 FROM scratch
 
-WORKDIR /usr/src/app
+WORKDIR /usr/src/target
 
-COPY --from=builder ./usr/src/app .
+COPY --from=builder ./usr/src/target .
 
 CMD ["./fullcycle"]
